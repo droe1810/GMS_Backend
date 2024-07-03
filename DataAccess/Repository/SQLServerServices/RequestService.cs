@@ -41,8 +41,18 @@ namespace DataAccess.Repository.SQLServerServices
                 return result;
 
             }
-            else
+            else 
             {
+                StudentGrade gradeToUpdate = _context.StudentGrades
+                .FirstOrDefault(sg => sg.GradeId == gradeId && sg.StudentId == studentId);
+
+                if(gradeToUpdate == null)
+                {
+                    result.IsSuccess = false;
+                    result.msg = "Your grade does not exist yet";
+                    return result;
+                }
+
                 Request r = new Request();
                 r.StudentId = studentId;
                 r.GradeId = gradeId;
