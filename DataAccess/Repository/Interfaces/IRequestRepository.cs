@@ -15,6 +15,6 @@ namespace DataAccess.Repository.Interfaces
  
         List<GetRequestDTO> GetAllRequest();
         List<GetRequestDTO> GetRequest(int studentId);
-        bool UpdateRequest(UpdateRequestDTO rDTO);
+        ResultForUpdateRequestDTO UpdateRequest(int requestId, int newGrade);
     }
 }

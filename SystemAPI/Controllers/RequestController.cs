@@ -1,4 +1,5 @@
 ﻿using BussinessObject.DTO.Request;
+using BussinessObject.Models;
 using DataAccess.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -56,11 +57,11 @@ namespace SystemAPI.Controllers
             }
         }
 
-        [HttpPatch("UpdateRequest")]
-        public IActionResult UpdateRequest([FromBody] UpdateRequestDTO rDTO) {
+        [HttpPatch("UpdateRequest/{requestId}/{newGrade}")]
+        public IActionResult UpdateRequest(int requestId, int newGrade) {
             try
             {
-                var result = _repository.UpdateRequest(rDTO);
+                var result = _repository.UpdateRequest( requestId,  newGrade);
                 return Ok(result);
             }
             catch (Exception e)

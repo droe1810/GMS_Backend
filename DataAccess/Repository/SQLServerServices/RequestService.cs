@@ -23,22 +23,22 @@ namespace DataAccess.Repository.SQLServerServices
             _context = context;
             _mapper = mapper;
         }
-        
+
 
         public ResultForCreateRequestDTO CreateRequest(int studentId, int gradeId, string requestContent)
         {
             ResultForCreateRequestDTO result = new ResultForCreateRequestDTO();
             User student = _context.Users.FirstOrDefault(u => u.Id == studentId);
-            if(student == null)
+            if (student == null)
             {
                 result.IsSuccess = false;
                 return result;
             }
-            else if(student.AccountBalance < 200000)
+            else if (student.AccountBalance < 200000)
             {
                 result.IsSuccess = false;
                 result.msg = "Account Balance is not enough";
-                return result ;
+                return result;
 
             }
             else
@@ -52,7 +52,7 @@ namespace DataAccess.Repository.SQLServerServices
                 result.IsSuccess = _context.SaveChanges() == 1;
                 return result;
             }
-           
+
         }
 
         public List<GetRequestDTO> GetAllRequest()
@@ -61,7 +61,7 @@ namespace DataAccess.Repository.SQLServerServices
                 .Include(r => r.Student)
                 .Include(r => r.Grade)
                 .ThenInclude(g => g.Course)
-                .Include (r => r.RequestStatus)
+                .Include(r => r.RequestStatus)
                 .OrderBy(r => r.RequestStatusId).ToList();
             List<GetRequestDTO> listRDTO = _mapper.Map<List<GetRequestDTO>>(listR);
 
@@ -83,26 +83,44 @@ namespace DataAccess.Repository.SQLServerServices
             return listRDTO;
         }
 
-        public bool UpdateRequest(UpdateRequestDTO rDTO)
+        public ResultForUpdateRequestDTO UpdateRequest(int requestId, int newGrade)
         {
-           Request r = _context.Requests.FirstOrDefault(r => r.Id == rDTO.requestId);
-            r.ResponeContent = rDTO.responeContent;
-            r.RequestStatusId = rDTO.newStatusId;
-            r.NewGradeValue = rDTO.newGradeValue;
+            ResultForUpdateRequestDTO result = new ResultForUpdateRequestDTO();
+            Request r = _context.Requests.FirstOrDefault(r => r.Id == requestId);
 
-            if (rDTO.newStatusId == 3) {
-                return _context.SaveChanges() == 1;
-            } else if(rDTO.newStatusId == 2) {
-                StudentGrade gradeToUpdate = _context.StudentGrades
-                    .FirstOrDefault(sg => sg.GradeId == r.GradeId && sg.StudentId == r.StudentId);
-
-                if (gradeToUpdate != null)
-                {
-                    gradeToUpdate.Value = rDTO.newGradeValue;
-                    return _context.SaveChanges() == 2;
-                }
+            if (r == null || r.RequestStatusId != 1)
+            {
+                result.IsSuccess = false;
+                return result;
             }
-            return false;
+            else {
+                r.NewGradeValue = newGrade;
+                result.newGrade = newGrade;
+                StudentGrade gradeToUpdate = _context.StudentGrades
+                  .FirstOrDefault(sg => sg.GradeId == r.GradeId && sg.StudentId == r.StudentId);
+
+                if (gradeToUpdate.Value == newGrade)
+                {
+                    r.ResponeContent = "Điểm không đổi";
+                    r.RequestStatusId = 3;
+                    result.statusName = "Reject";
+                    result.IsSuccess = _context.SaveChanges() == 1;
+
+                    return result;
+                }
+                else
+                {
+                    r.ResponeContent = "Phúc tra thành công, vui lòng kiểm tra lại điểm trên GMS";
+                    r.RequestStatusId = 2;
+                    result.statusName = "Approved";
+                    gradeToUpdate.Value = newGrade;
+
+                    result.IsSuccess = _context.SaveChanges() == 2;
+
+                    return result;
+                }
+
+            }
         }
     }
 }
