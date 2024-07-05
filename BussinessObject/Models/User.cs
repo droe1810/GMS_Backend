@@ -13,6 +13,15 @@ namespace BussinessObject.Models
             StudentGrades = new HashSet<StudentGrade>();
         }
 
+        public User(int id, string? username, string? password, int? accountBalance, int? roleId)
+        {
+            Id = id;
+            Username = username;
+            Password = password;
+            AccountBalance = accountBalance;
+            RoleId = roleId;
+        }
+
         public int Id { get; set; }
         public string? Username { get; set; }
         public string? Password { get; set; }

@@ -2,6 +2,7 @@
 using BussinessObject.Models;
 using DataAccess.AutoMapper;
 using DataAccess.DataAccess;
+using DataAccess.Repository.File;
 using DataAccess.Repository.Interfaces;
 using DataAccess.Repository.SQLServerServices;
 using Microsoft.AspNetCore.OData;
@@ -48,6 +49,7 @@ namespace SystemAPI
             //add services repository pattern
             services.AddTransient<IGradeTypeRepository, GradeTypeService>();
             services.AddTransient<IUserRepository, UserService>();
+            //services.AddTransient<IUserRepository, UserFromFileManager>();
             services.AddTransient<IPassConditionRepository, PassConditionService>();
             services.AddTransient<IRoleRepository, RoleService>();
             services.AddTransient<IComparisonTypeRepositorycs, ComparisonTypeService>();
