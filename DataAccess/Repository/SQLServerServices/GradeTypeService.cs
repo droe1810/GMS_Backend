@@ -3,6 +3,7 @@ using BussinessObject.DTO.GradeType;
 using BussinessObject.Models;
 using DataAccess.DataAccess;
 using DataAccess.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,17 +24,73 @@ namespace DataAccess.Repository.SQLServerServices
         }
         public bool CreateGradeType(CreateGradeTypeDTO gtDTO)
         {
+            bool isNameExists = _context.GradeTypes.Any(gt => gt.Name.ToLower().Trim() == gtDTO.Name.ToLower().Trim());
+            if (isNameExists)
+            {
+                return false;
+            }
+
             GradeType gt = _mapper.Map<GradeType>(gtDTO);
+            gt.Name = gt.Name.Trim();
+
+
+            var passCondition = _context.PassConditions
+    .FirstOrDefault(pc => pc.ComparisonTypeId == gt.PassCondition.ComparisonTypeId && pc.GradeValue == gt.PassCondition.GradeValue);
+
+            if (passCondition != null)
+            {
+                gt.PassConditionId = passCondition.Id;
+            }
             gt.PassCondition = null;
-            _context.GradeTypes.Add(gt);
+
+            _context.Add(gt);
             return _context.SaveChanges() == 1;
+        }
+
+        public bool DeleteGradeType(int gradeTypeId)
+        {
+            GradeType gradeTyoeToDelete = _context.GradeTypes.FirstOrDefault(gt => gt.Id == gradeTypeId);
+            if (gradeTyoeToDelete != null)
+            {
+                _context.GradeTypes.Remove(gradeTyoeToDelete);
+                return _context.SaveChanges() == 1;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public List<GetGradeTypeDTO> GetAllGradeType()
         {
-            List<GradeType> result = _context.GradeTypes.ToList();
+            List<GradeType> result = _context.GradeTypes
+                .Include(gt => gt.GradedByRoleNavigation)
+                .Include(gt => gt.PassCondition)
+                .ThenInclude(pc => pc.ComparisonType)
+                .ToList();
             List<GetGradeTypeDTO> resultDTO = _mapper.Map<List<GetGradeTypeDTO>>(result);
             return resultDTO;
+        }
+
+        public bool UpdateGradeType(int gradeTypeId, int gradedByRole,  string newCcomparisonType, int newGradeValue)
+        {
+            GradeType gt = _context.GradeTypes.FirstOrDefault(gt => gt.Id==gradeTypeId);
+            if (gt != null)
+            {
+              
+                PassCondition p = _context.PassConditions.FirstOrDefault(p => p.ComparisonType.Name.Equals(newCcomparisonType)  && p.GradeValue == newGradeValue);
+                if (p != null)
+                {
+                    gt.PassConditionId = p.Id;
+
+                    gt.GradedByRole = gradedByRole;
+
+                    //return _context.SaveChanges() == 1;
+                    _context.SaveChanges();
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
