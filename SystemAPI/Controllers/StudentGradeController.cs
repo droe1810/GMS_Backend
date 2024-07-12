@@ -74,7 +74,7 @@ namespace SystemAPI.Controllers
         }
 
 
-        [HttpGet("DeleteStudentGrade/{gradeId}/{studentId}")]
+        [HttpDelete("DeleteStudentGrade/{gradeId}/{studentId}")]
 
         public IActionResult DeleteStudentGrade(int gradeId, int studentId)
         {

@@ -13,11 +13,9 @@ namespace SystemAPI.Controllers
     public class GradeTypeController : ControllerBase
     {
         private IGradeTypeRepository _repository;
-        private IPassConditionRepository _passconditionRepository;
-        public GradeTypeController(IGradeTypeRepository repository, IPassConditionRepository passconditionRepository)
+        public GradeTypeController(IGradeTypeRepository repository)
         {
             _repository = repository;
-            _passconditionRepository = passconditionRepository;
         }
 
 
@@ -38,8 +36,37 @@ namespace SystemAPI.Controllers
         public IActionResult CreateGradeType(CreateGradeTypeDTO gtDTO) {
             try
             {
-                gtDTO.PassConditionId = _passconditionRepository.GetPassConditionId((int)gtDTO.ComparasionTypeId, (int)gtDTO.GradeValue);
                 var result = _repository.CreateGradeType(gtDTO);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+        [HttpPatch("UpdateGradeType/{gradeTypeId}/{gradedByRole}/{newCcomparisonType}/{newGradeValue}")]
+        public IActionResult UpdateGradeType(int gradeTypeId, int gradedByRole, string newCcomparisonType, int newGradeValue)
+        {
+            try
+            {
+                var result = _repository.UpdateGradeType(gradeTypeId, gradedByRole, newCcomparisonType, newGradeValue);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+        [HttpDelete("DeleteGradeType/{gradeTypeId}")]
+        public IActionResult DeleteGradeType(int gradeTypeId)
+        {
+            try
+            {
+                var result = _repository.DeleteGradeType(gradeTypeId);
                 return Ok(result);
             }
             catch (Exception e)

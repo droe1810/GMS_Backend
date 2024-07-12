@@ -24,7 +24,7 @@ namespace DataAccess.AutoMapper
     {
         public ApplicationMapper()
         {
-          
+
             CreateMap<GradeType, CreateGradeTypeDTO>()
                .ForMember(dest => dest.ComparasionTypeId, otp => otp.MapFrom(src => src.PassCondition.ComparisonTypeId))
                .ForMember(dest => dest.GradeValue, otp => otp.MapFrom(src => src.PassCondition.GradeValue))
@@ -34,7 +34,13 @@ namespace DataAccess.AutoMapper
 
             CreateMap<ComparisonType, ComparisonTypeDTO>().ReverseMap();
 
-            CreateMap<GradeType, GetGradeTypeDTO>().ReverseMap();
+            CreateMap<GradeType, GetGradeTypeDTO>()
+                .ForMember(desc => desc.GradedByRoleId, otp => otp.MapFrom(src => src.GradedByRole))
+                .ForMember(desc => desc.GradedByRoleName, otp => otp.MapFrom(src => src.GradedByRoleNavigation.RoleName))
+                .ForMember(desc => desc.ComparisonType, otp => otp.MapFrom(src => src.PassCondition.ComparisonType.Name))
+                .ForMember(desc => desc.ComparisonValue, otp => otp.MapFrom(src => src.PassCondition.GradeValue))
+                
+                .ReverseMap();
 
             CreateMap<Course, CourseDTO>().ReverseMap();
 
