@@ -29,7 +29,7 @@ namespace DataAccess.Repository.SQLServerServices
         public bool CheckStudentGradeExist(int gradeId, int studentId)
         {
             StudentGrade sg = _context.StudentGrades.FirstOrDefault(sg => sg.GradeId == gradeId && sg.StudentId == studentId);
-            if(sg == null)
+            if (sg == null)
             {
                 return false;
             }
@@ -83,13 +83,27 @@ namespace DataAccess.Repository.SQLServerServices
 
             foreach (var gradeTypeDTO in listGradeTypeDTOInCourse)
             {
-                List<StudentGrade> listGradeInGradeType = _context.StudentGrades
-                    .Include(sg => sg.Grade)
-                    .Where(sg => sg.StudentId == studentId
-                            && sg.Grade.CourseId == courseId
-                            && sg.Grade.GradeTypeId == gradeTypeDTO.GradeTypeId)
-                    .ToList();
+                //List<StudentGrade> listGradeInGradeType = _context.StudentGrades
+                //    .Include(sg => sg.Grade)
+                //    .Where(sg => sg.StudentId == studentId
+                //            && sg.Grade.CourseId == courseId
+                //            && sg.Grade.GradeTypeId == gradeTypeDTO.GradeTypeId)
+                //    .ToList();
+                List<Grade> listGradeInGradeType = _context.Grades.Where(g => g.GradeTypeId == gradeTypeDTO.GradeTypeId && g.CourseId == courseId).ToList();
+
                 List<GradeDTO> listGradeDTOInGradeType = _mapper.Map<List<GradeDTO>>(listGradeInGradeType);
+                foreach (var gradeDTO in listGradeDTOInGradeType)
+                {
+                    StudentGrade sg = _context.StudentGrades.FirstOrDefault(sg => sg.StudentId == studentId && sg.GradeId == gradeDTO.GradeId);
+                    if (sg == null)
+                    {
+                        gradeDTO.Value = "No data";
+                    }
+                    else
+                    {
+                        gradeDTO.Value = sg.Value.ToString();
+                    }
+                }
                 gradeTypeDTO.Grades = listGradeDTOInGradeType;
             }
 

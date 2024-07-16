@@ -59,10 +59,16 @@ namespace DataAccess.AutoMapper
                 .ForMember(desc => desc.CourseName, otp => otp.MapFrom(src => src.Course.Code))
                 .ReverseMap();
 
-            CreateMap<StudentGrade, GradeDTO>()
-                .ForMember(desc => desc.GradeId, otp => otp.MapFrom(src => src.Grade.Id))
-                .ForMember(desc => desc.GradeName, otp => otp.MapFrom(src => src.Grade.Name))
-                .ForMember(desc => desc.Weight, otp => otp.MapFrom(src => src.Grade.Weight))
+            //CreateMap<StudentGrade, GradeDTO>()
+            //    .ForMember(desc => desc.GradeId, otp => otp.MapFrom(src => src.Grade.Id))
+            //    .ForMember(desc => desc.GradeName, otp => otp.MapFrom(src => src.Grade.Name))
+            //    .ForMember(desc => desc.Weight, otp => otp.MapFrom(src => src.Grade.Weight))
+            //    .ReverseMap();
+
+            CreateMap<Grade, GradeDTO>()
+                .ForMember(dest => dest.GradeId, otp => otp.MapFrom(src => src.Id))
+                .ForMember(dest => dest.GradeName, otp => otp.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Weight, otp => otp.MapFrom(src => src.Weight))
                 .ReverseMap();
 
             CreateMap<GradeType, GradeTypeDTO>()

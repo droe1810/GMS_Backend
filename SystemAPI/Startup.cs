@@ -1,14 +1,8 @@
-﻿using BussinessObject.DTO.Request;
-using BussinessObject.Models;
-using DataAccess.AutoMapper;
+﻿using DataAccess.AutoMapper;
 using DataAccess.DataAccess;
-using DataAccess.Repository.File;
 using DataAccess.Repository.Interfaces;
 using DataAccess.Repository.SQLServerServices;
-using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.OData.ModelBuilder;
 
 namespace SystemAPI
 {
@@ -59,6 +53,7 @@ namespace SystemAPI
             services.AddTransient<ISessionStudentRepository, SessionStudentService>();
             services.AddTransient<IStudentGradeRepository, StudentGradeService>();
             services.AddTransient<IRequestRepository, RequestService>();
+            services.AddTransient<ISemesterRepository, SemesterService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

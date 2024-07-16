@@ -30,6 +30,32 @@ namespace DataAccess.Repository.SQLServerServices
         {
             ResultForCreateGradeDTO result = new ResultForCreateGradeDTO();
 
+            bool courseIsDistributed = _context.Grades.Any(g => g.CourseId == courseId);
+            if (courseIsDistributed)
+            {
+                string courseName = _context.Courses.FirstOrDefault(c => c.Id == courseId).Code;
+                result.IsSuccess = false;
+                result.NumberCreated = 0;
+                result.Msg = $"Distribute fail. Course {courseName} already Distributed";
+                return result;
+            }
+
+            // check xem co trung GradeType không
+            int length = ListGDTO.Count();
+            for (int i = 0; i < length - 1; i++)
+            {
+                for (int j = i + 1; j < length; j++)
+                {
+                    if (ListGDTO[i].GradeTypeId == ListGDTO[j].GradeTypeId)
+                    {
+                        result.IsSuccess = false;
+                        result.NumberCreated = 0;
+                        result.Msg = "Distribute fail. Duplicate GradeType";
+                        return result;
+                    }
+                }
+            }
+
             // check xem tong weight cua cac dau diem du 100 hay chưa
             int totalWeight = 0;
             foreach (var gradeDTO in ListGDTO)
@@ -40,7 +66,7 @@ namespace DataAccess.Repository.SQLServerServices
             {
                 result.IsSuccess = false;
                 result.NumberCreated = 0;
-                result.Msg = "Total weight is not equal to 100. Create fail";
+                result.Msg = "Distribute fail. Total Weigh is not equal to 100";
                 return result;
             }
 
@@ -69,6 +95,7 @@ namespace DataAccess.Repository.SQLServerServices
             }
             _context.Grades.AddRange(listG);
             result.IsSuccess = true;
+            result.Msg = "Distribute Success";
             result.NumberCreated = _context.SaveChanges();
 
             return result;

@@ -11,5 +11,6 @@ namespace DataAccess.Repository.Interfaces
     public interface ICourseRepository
     {
         List<CourseDTO> GetAllCourses();
+        bool DeleteGradeDistribution(int courseId);
     }
 }

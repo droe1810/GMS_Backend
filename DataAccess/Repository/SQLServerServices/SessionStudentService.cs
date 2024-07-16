@@ -31,11 +31,18 @@ namespace DataAccess.Repository.SQLServerServices
                 .Select(c => c.Id)
                 .ToList();
 
-            List<StudentGrade> list = _context.StudentGrades
+
+
+            List<StudentGrade> listStudentGrade = _context.StudentGrades
                 .Where(sg => listGradeIdInCourse.Contains(sg.GradeId) && sg.StudentId == studentId).ToList();
 
+
+            if (listGradeIdInCourse.Count != listStudentGrade.Count) { 
+                return 0;
+            }
+
             decimal totalGrade = 0;
-            foreach (StudentGrade item in list)
+            foreach (StudentGrade item in listStudentGrade)
             {
                 totalGrade += (item.Value ?? 0) * GetWeight(item.GradeId);
             }

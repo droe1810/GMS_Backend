@@ -6,34 +6,36 @@ namespace SystemAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CourseController : ControllerBase
+    public class SemesterController : ControllerBase
     {
-        private ICourseRepository _repository;
-        public CourseController(ICourseRepository repository)
+
+        private ISemesterRepository _repository;
+        public SemesterController(ISemesterRepository repository)
         {
             _repository = repository;
         }
 
-        [HttpGet("GetAllCourse")]
-        public IActionResult GetAllCourse() {
+        [HttpGet("IsSemesterOnGoing")]
+
+        public IActionResult IsSemesterOnGoing()
+        {
             try
             {
-                var result = _repository.GetAllCourses();
+                bool result = _repository.IsOnGoing();
                 return Ok(result);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
-          
         }
 
-        [HttpDelete("DeleteGradeDistribution/{courseId}")]
-
-        public IActionResult DeleteCourse(int courseId) {
+        [HttpPut("ChangeSemesterStatus")]
+        public IActionResult ChangeSemesterStatus()
+        {
             try
             {
-                var result = _repository.DeleteGradeDistribution(courseId);
+                string result = _repository.ChangeSemesterStatus();
                 return Ok(result);
             }
             catch (Exception e)

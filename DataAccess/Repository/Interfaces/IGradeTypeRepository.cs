@@ -14,5 +14,6 @@ namespace DataAccess.Repository.Interfaces
         bool CreateGradeType(CreateGradeTypeDTO gtDTO);
         bool UpdateGradeType(int gradeTypeId, int gradedByRole, string newCcomparisonType, int newGradeValue);
         bool DeleteGradeType(int gradeTypeId);
+        GradeDistributionDTO GetDistribution (int gradeTypeId, int courseId);
     }
 }

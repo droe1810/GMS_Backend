@@ -72,13 +72,29 @@ namespace DataAccess.Repository.SQLServerServices
             return resultDTO;
         }
 
-        public bool UpdateGradeType(int gradeTypeId, int gradedByRole,  string newCcomparisonType, int newGradeValue)
+        public GradeDistributionDTO GetDistribution(int gradeTypeId, int courseId)
         {
-            GradeType gt = _context.GradeTypes.FirstOrDefault(gt => gt.Id==gradeTypeId);
+            GradeDistributionDTO distribution = new GradeDistributionDTO();
+
+            if (_context.Grades.FirstOrDefault(g => g.CourseId == courseId && g.GradeTypeId == gradeTypeId) == null) {
+                return null;
+            }
+
+            distribution.quantityInGradeType = _context.Grades.Where(g => g.CourseId == courseId && g.GradeTypeId == gradeTypeId).ToList().Count;
+
+            distribution.weight = _context.Grades.FirstOrDefault(g => g.CourseId == courseId && g.GradeTypeId == gradeTypeId).Weight * distribution.quantityInGradeType;
+
+            return distribution;
+
+        }
+
+        public bool UpdateGradeType(int gradeTypeId, int gradedByRole, string newCcomparisonType, int newGradeValue)
+        {
+            GradeType gt = _context.GradeTypes.FirstOrDefault(gt => gt.Id == gradeTypeId);
             if (gt != null)
             {
-              
-                PassCondition p = _context.PassConditions.FirstOrDefault(p => p.ComparisonType.Name.Equals(newCcomparisonType)  && p.GradeValue == newGradeValue);
+
+                PassCondition p = _context.PassConditions.FirstOrDefault(p => p.ComparisonType.Name.Equals(newCcomparisonType) && p.GradeValue == newGradeValue);
                 if (p != null)
                 {
                     gt.PassConditionId = p.Id;

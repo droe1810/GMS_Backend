@@ -21,6 +21,22 @@ namespace DataAccess.Repository.SQLServerServices
             _context = context;
             _mapper = mapper;
         }
+
+        public bool DeleteGradeDistribution(int courseId)
+        {
+            try
+            {
+                List<Grade> listGradeToDelete = _context.Grades.Where(g => g.CourseId == courseId).ToList();
+                _context.Grades.RemoveRange(listGradeToDelete);
+                _context.SaveChanges();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public List<CourseDTO> GetAllCourses()
         {
             var result = _context.Courses.ToList();
