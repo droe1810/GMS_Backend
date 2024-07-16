@@ -74,5 +74,21 @@ namespace SystemAPI.Controllers
                 return BadRequest(e.Message);
             }
         }
+
+        [HttpGet("GetDistribution/{gradeTypeId}/{courseId}")]
+
+        public IActionResult GetDistribution(int gradeTypeId, int courseId)
+        {
+            try
+            {
+                var result = _repository.GetDistribution(gradeTypeId, courseId);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
